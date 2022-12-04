@@ -1,0 +1,120 @@
+* Advent of Code 2023
+
+** Day 1
+#+begin_src python
+inp = open("/home/uni/Sync/aoc/input1").readlines()
+splits = []
+s = []
+for i in inp:
+  if i == "\n":
+    splits.append(s.copy())
+    s = []
+  else:
+    s.append(int(i.strip()))
+splits = map(sum, splits)
+return sum(sorted(splits)[-3:])
+#+END_SRC
+
+#+RESULTS:
+: 198041
+** Day 2
+#+begin_src haskell :compile yes :results output
+import Data.Char
+main =  print . func . (map (\[[x],[y]] -> (x,y))) . map words . lines =<< readFile "/home/uni/Sync/aoc/input2"
+func :: [(Char, Char)] -> Int
+func = sum . map (\(a,b) -> charScore a b + winScore a b)
+  where charScore a b =
+          (ord b - ord 'X' + 1)
+        winScore a b | (ord a - ord 'A') == (ord b - ord 'X') = 3
+                     | otherwise = case (a,b) of
+                         ('A','Y') -> 6
+                         ('B','Z') -> 6
+                         ('C','X') -> 6
+                         _         -> 0
+#+end_src
+
+#+RESULTS:
+: 11666
+
+#+begin_src haskell :compile yes :results output
+import Data.Char
+main =  print . func . (map (\[[x],[y]] -> (x,y))) . map words . lines =<< readFile "/home/uni/Sync/aoc/input2"
+func :: [(Char, Char)] -> Int
+func = sum . map (\(a,b) -> charScore a b + winScore a b) . map (\(x,y) -> (x,choosePlay x y))
+  where charScore a b =
+          (ord b - ord 'X' + 1)
+        winScore a b | (ord a - ord 'A') == (ord b - ord 'X') = 3
+                     | otherwise = case (a,b) of
+                         ('A','Y') -> 6
+                         ('B','Z') -> 6
+                         ('C','X') -> 6
+                         _         -> 0
+        choosePlay a 'Y' = chr ((ord a - ord 'A') + ord 'X')
+        choosePlay 'A' 'X' = 'Z'
+        choosePlay 'B' 'X' = 'X'
+        choosePlay 'C' 'X' = 'Y'
+        choosePlay 'A' 'Z' = 'Y'
+        choosePlay 'B' 'Z' = 'Z'
+        choosePlay 'C' 'Z' = 'X'
+#+end_src
+
+#+RESULTS:
+: 12767
+** Day 3
+#+begin_src ruby :results output
+class String
+  def halves
+    chars.each_slice(size / 2).map(&:join)
+  end
+    end
+n = 0
+File.foreach("aoc/input3") do |x|
+  dep1, dep2 = x.halves
+  char = (dep1.split('') & dep2.split('')).first
+  n += (char.bytes.map {|x| x - 64}.first)+26  if char == char.upcase
+  n += (char.bytes.map {|x| x - 96}.first)  if char == char.downcase
+end
+puts n
+     n = 0
+File.foreach("aoc/input3").each_slice(3) do |xs|
+  char = (xs[0].split('') & xs[1].split('') & xs[2].split('')).first
+  n += (char.bytes.map {|x| x - 64}.first)+26  if char == char.upcase
+  n += (char.bytes.map {|x| x - 96}.first)  if char == char.downcase
+end
+puts n
+#+end_src
+
+#+RESULTS:
+: 7848
+: 2616
+** Day 4
+#+begin_src bash
+i=0;
+while read p; do
+p=(${p//[,-]/ })
+if (( (p[0] <= p[2] && p[1] >= p[3]) || (p[0] >= p[2] && p[1] <= p[3]) ))
+then
+$((i+=1))
+fi
+done < aoc/input4
+echo $i
+#+end_src
+
+#+RESULTS:
+: 500
+#+begin_src bash
+i=0;
+while read p; do
+p=(${p//[,-]/ })
+if (( (p[0] <= p[2] && p[1] >= p[2]) || (p[0] >= p[2] && p[0] <= p[3]) ))
+then
+$((i+=1))
+fi
+done < aoc/input4
+echo $i
+#+end_src
+
+#+RESULTS:
+: 815
+
+#+end_src
