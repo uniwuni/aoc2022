@@ -116,5 +116,55 @@ echo $i
 
 #+RESULTS:
 : 815
+** Day 5
+#+begin_src racket :results output
+#lang racket
+
+(define (string-group input n)
+   (map (lambda (x) (substring input x (min (+ x n) (string-length input)))) (range 0 (string-length input) n)))
+(define (parse input)
+  (let* ((split1 (string-split input "\n\n"))
+         (header* (first split1))
+         (header**
+          (apply map list
+                 (map (lambda (a)
+                       (string-group a 4)) (string-split  header* "\n"))))
+         (header (map (lambda (a) (filter non-empty-string? (map (lambda (b) (string-trim (string-replace b #rx"\\[|\\]*" ""))) (drop-right a 1)))) header**))
+         (footer* (map (lambda (a) (list (string->number (second (string-split a))) (string->number (fourth (string-split a))) (string->number (sixth (string-split a))))) (string-split (second split1) "\n")))) (list header footer*)))
+
+
+
+(define (act-single value many from to)
+  (list-update (list-update value (- to 1)
+                            (lambda (u)
+                              (append
+                               (reverse
+                                (take (list-ref value (- from 1)) many))
+                               u)))
+    (- from 1)
+    (lambda (u) (drop u many))))
+
+
+(define (act-single* value many from to)
+  (list-update (list-update value (- to 1)
+                            (lambda (u)
+                              (append
+                                (take (list-ref value (- from 1)) many)
+                               u)))
+    (- from 1)
+    (lambda (u) (drop u many))))
+
+
+
+(define (act header footer) (foldl (lambda (a b) (act-single b (first a) (second a) (third a))) header footer))
+(define (act* header footer) (foldl (lambda (a b) (act-single* b (first a) (second a) (third a))) header footer))
+(define part1 (apply string-append (map first (apply act (parse (file->string "input5"))))))
+(define part2 (apply string-append (map first (apply act* (parse (file->string "input5"))))))
+part1
+part2
 
 #+end_src
+
+#+RESULTS:
+: "WHTLRMZRC"
+: "GMPMLWNMG"
