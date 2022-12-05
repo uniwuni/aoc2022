@@ -13,10 +13,11 @@ for i in inp:
     s.append(int(i.strip()))
 splits = map(sum, splits)
 return sum(sorted(splits)[-3:])
-#+END_SRC
+#+END_src
 
 #+RESULTS:
 : 198041
+
 ** Day 2
 #+begin_src haskell :compile yes :results output
 import Data.Char
@@ -60,6 +61,7 @@ func = sum . map (\(a,b) -> charScore a b + winScore a b) . map (\(x,y) -> (x,ch
 
 #+RESULTS:
 : 12767
+
 ** Day 3
 #+begin_src ruby :results output
 class String
@@ -87,6 +89,7 @@ puts n
 #+RESULTS:
 : 7848
 : 2616
+
 ** Day 4
 #+begin_src bash
 i=0;
@@ -116,6 +119,7 @@ echo $i
 
 #+RESULTS:
 : 815
+
 ** Day 5
 #+begin_src racket :results output
 #lang racket
