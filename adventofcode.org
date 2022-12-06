@@ -172,6 +172,8 @@ part2
 #+RESULTS:
 : "WHTLRMZRC"
 : "GMPMLWNMG"
+
+
 ** Day 6
 #+begin_src C :includes <stdio.h> :exports both
     FILE* file = fopen("input6","r");
