@@ -1,7 +1,7 @@
 * Advent of Code 2022
 
 ** Day 1
-#+begin_src python
+#+begin_src python :exports both
 inp = open("/home/uni/Sync/aoc/input1").readlines()
 splits = []
 s = []
@@ -19,7 +19,7 @@ return sum(sorted(splits)[-3:])
 : 198041
 
 ** Day 2
-#+begin_src haskell :compile yes :results output
+#+begin_src haskell :compile yes :results output :exports both
 import Data.Char
 main =  print . func . (map (\[[x],[y]] -> (x,y))) . map words . lines =<< readFile "/home/uni/Sync/aoc/input2"
 func :: [(Char, Char)] -> Int
@@ -37,7 +37,7 @@ func = sum . map (\(a,b) -> charScore a b + winScore a b)
 #+RESULTS:
 : 11666
 
-#+begin_src haskell :compile yes :results output
+#+begin_src haskell :compile yes :results output :exports both
 import Data.Char
 main =  print . func . (map (\[[x],[y]] -> (x,y))) . map words . lines =<< readFile "/home/uni/Sync/aoc/input2"
 func :: [(Char, Char)] -> Int
@@ -63,7 +63,7 @@ func = sum . map (\(a,b) -> charScore a b + winScore a b) . map (\(x,y) -> (x,ch
 : 12767
 
 ** Day 3
-#+begin_src ruby :results output
+#+begin_src ruby :results output :exports both
 class String
   def halves
     chars.each_slice(size / 2).map(&:join)
@@ -91,7 +91,7 @@ puts n
 : 2616
 
 ** Day 4
-#+begin_src bash
+#+begin_src bash :exports both
 i=0;
 while read p; do
 p=(${p//[,-]/ })
@@ -105,7 +105,7 @@ echo $i
 
 #+RESULTS:
 : 500
-#+begin_src bash
+#+begin_src bash :exports both
 i=0;
 while read p; do
 p=(${p//[,-]/ })
@@ -121,7 +121,7 @@ echo $i
 : 815
 
 ** Day 5
-#+begin_src racket :results output
+#+begin_src racket :results output :exports both
 #lang racket
 
 (define (string-group input n)
@@ -173,7 +173,7 @@ part2
 : "WHTLRMZRC"
 : "GMPMLWNMG"
 ** Day 6
-#+begin_src C :includes <stdio.h> :tangle yes
+#+begin_src C :includes <stdio.h> :exports both
     FILE* file = fopen("input6","r");
     int i = 0;
     char* chars = malloc(4);
@@ -198,7 +198,7 @@ part2
 : 1658
 
 
-#+begin_src C :includes <stdio.h> :tangle yes
+#+begin_src C :includes <stdio.h> :exports both
     FILE* file = fopen("input6","r");
     int i = 0;
     char* chars = malloc(14);
