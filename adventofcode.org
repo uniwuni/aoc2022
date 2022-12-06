@@ -172,3 +172,55 @@ part2
 #+RESULTS:
 : "WHTLRMZRC"
 : "GMPMLWNMG"
+** Day 6
+#+begin_src C :includes <stdio.h> :tangle yes
+    FILE* file = fopen("input6","r");
+    int i = 0;
+    char* chars = malloc(4);
+    for(;;){
+      fseek(file, i, SEEK_SET);
+      chars[0] = fgetc(file);
+      chars[1] = fgetc(file);
+      chars[2] = fgetc(file);
+      chars[3] = fgetc(file);
+      if(chars[0] != chars[1] && chars[0] != chars[2] && chars[0] != chars[3] && chars[1] != chars[2] && chars[1] != chars[3] && chars[2] != chars[3]) {
+        printf("%d", i + 4);
+        return 0;
+      }
+      if(chars[0] == 0) return 0;
+      i++;
+
+    }
+
+#+end_src
+
+#+RESULTS:
+: 1658
+
+
+#+begin_src C :includes <stdio.h> :tangle yes
+    FILE* file = fopen("input6","r");
+    int i = 0;
+    char* chars = malloc(14);
+    for(;;){
+      fseek(file, i, SEEK_SET);
+      int alldifferent = 1;
+      for(int j = 0; j < 14; j++) {
+        chars[j] = fgetc(file);
+        for(int k = 0; k < j; k++) {
+          if(chars[k] == chars[j]) alldifferent = 0;
+        }
+      }
+      if(alldifferent){
+        printf("%d", i + 14);
+        return 0;
+      }
+      if(chars[0] == 0) return 0;
+      i++;
+
+    }
+
+#+end_src
+
+#+RESULTS:
+: 2260
