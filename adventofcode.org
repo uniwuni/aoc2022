@@ -15,9 +15,6 @@ splits = map(sum, splits)
 return sum(sorted(splits)[-3:])
 #+END_src
 
-#+RESULTS:
-: 198041
-
 ** Day 2
 #+begin_src haskell :compile yes :results output :exports both
 import Data.Char
@@ -33,9 +30,6 @@ func = sum . map (\(a,b) -> charScore a b + winScore a b)
                          ('C','X') -> 6
                          _         -> 0
 #+end_src
-
-#+RESULTS:
-: 11666
 
 #+begin_src haskell :compile yes :results output :exports both
 import Data.Char
@@ -58,9 +52,6 @@ func = sum . map (\(a,b) -> charScore a b + winScore a b) . map (\(x,y) -> (x,ch
         choosePlay 'B' 'Z' = 'Z'
         choosePlay 'C' 'Z' = 'X'
 #+end_src
-
-#+RESULTS:
-: 12767
 
 ** Day 3
 #+begin_src ruby :results output :exports both
@@ -86,10 +77,6 @@ end
 puts n
 #+end_src
 
-#+RESULTS:
-: 7848
-: 2616
-
 ** Day 4
 #+begin_src bash :exports both
 i=0;
@@ -102,9 +89,6 @@ fi
 done < aoc/input4
 echo $i
 #+end_src
-
-#+RESULTS:
-: 500
 #+begin_src bash :exports both
 i=0;
 while read p; do
@@ -116,9 +100,6 @@ fi
 done < aoc/input4
 echo $i
 #+end_src
-
-#+RESULTS:
-: 815
 
 ** Day 5
 #+begin_src racket :results output :exports both
@@ -169,10 +150,6 @@ part2
 
 #+end_src
 
-#+RESULTS:
-: "WHTLRMZRC"
-: "GMPMLWNMG"
-
 
 ** Day 6
 #+begin_src C :includes <stdio.h> :exports both
@@ -195,9 +172,6 @@ part2
     }
 
 #+end_src
-
-#+RESULTS:
-: 1658
 
 
 #+begin_src C :includes <stdio.h> :exports both
@@ -224,5 +198,64 @@ part2
 
 #+end_src
 
+** Day 7
+
+#+begin_src js :results output
+const fs = require('fs');
+const input = fs.readFileSync('input7', 'utf8').split("\n").slice(1).map(element => { return element.trim().split(" "); });
+
+function accessJSON(d,p) {
+    d2 = d;
+    for(i of p) {
+        d2 = d2[p];
+    }
+    return d2;
+}
+
+path = [];
+data = {'/': 0};
+lsMode = false;
+for(const line of  input) {
+    if(line[0] == "$") {
+        if(line[1] == "ls") {
+
+        }
+        else if(line[1] == "cd") {
+
+            if(line[2] == "..") { path = path.slice(0,path.length-1);  }
+            else {
+                //console.log(("data".concat("[\"",path.join("\"][\""), "\"\]", "= {};")));
+                data["/"+path.join("/")] = isNaN(data["/"+path.join("/")]) ? 0 : data["/"+path.join("/")];
+                path.push(line[2]);
+                data["/"+path.join("/")] = isNaN(data["/"+path.join("/")]) ? 0 : data["/"+path.join("/")];
+            }
+        }
+    }
+    else if("dir" != line[0]) {
+        size = +line[0];
+        file = line[1];
+        //console.log(path, data["/"+path.slice(0,i).join("/")], +line[0]);
+        for(var i = 0; i <= path.length; i++) {
+            //console.log("/"+path.slice(0,i).join("/"));
+            data["/"+path.slice(0,i).join("/")] += size;
+        }
+    }
+}
+
+
+console.log(Object.values(data).filter(element => {return element < 100000; }).reduce((a,b) => a + b,0));
+free = 70000000 - data["/"];
+needed = 30000000 - free;
+
+var filtered = Object.keys(data ).reduce(function (filtered, key) {
+    if (data[key] >= needed) filtered[key] = data[key];
+    return filtered;
+}, {});
+
+var [lowestItems] = Object.entries(filtered).sort(([ ,v1], [ ,v2]) => v1 - v2);
+console.log(lowestItems);
+#+end_src
+
 #+RESULTS:
-: 2260
+: 1444896
+: [ '/jvwtm/zjmldjdh/mdclfbs', 404395 ]
