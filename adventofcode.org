@@ -15,6 +15,9 @@ splits = map(sum, splits)
 return sum(sorted(splits)[-3:])
 #+END_src
 
+#+RESULTS:
+: 198041
+
 ** Day 2
 #+begin_src haskell :compile yes :results output :exports both
 import Data.Char
@@ -30,6 +33,9 @@ func = sum . map (\(a,b) -> charScore a b + winScore a b)
                          ('C','X') -> 6
                          _         -> 0
 #+end_src
+
+#+RESULTS:
+: 11666
 
 #+begin_src haskell :compile yes :results output :exports both
 import Data.Char
@@ -53,6 +59,9 @@ func = sum . map (\(a,b) -> charScore a b + winScore a b) . map (\(x,y) -> (x,ch
         choosePlay 'C' 'Z' = 'X'
 #+end_src
 
+#+RESULTS:
+: 12767
+
 ** Day 3
 #+begin_src ruby :results output :exports both
 class String
@@ -61,7 +70,7 @@ class String
   end
     end
 n = 0
-File.foreach("aoc/input3") do |x|
+File.foreach("input3") do |x|
   dep1, dep2 = x.halves
   char = (dep1.split('') & dep2.split('')).first
   n += (char.bytes.map {|x| x - 64}.first)+26  if char == char.upcase
@@ -69,13 +78,17 @@ File.foreach("aoc/input3") do |x|
 end
 puts n
      n = 0
-File.foreach("aoc/input3").each_slice(3) do |xs|
+File.foreach("input3").each_slice(3) do |xs|
   char = (xs[0].split('') & xs[1].split('') & xs[2].split('')).first
   n += (char.bytes.map {|x| x - 64}.first)+26  if char == char.upcase
   n += (char.bytes.map {|x| x - 96}.first)  if char == char.downcase
 end
 puts n
 #+end_src
+
+#+RESULTS:
+: 7848
+: 2616
 
 ** Day 4
 #+begin_src bash :exports both
@@ -86,9 +99,13 @@ if (( (p[0] <= p[2] && p[1] >= p[3]) || (p[0] >= p[2] && p[1] <= p[3]) ))
 then
 $((i+=1))
 fi
-done < aoc/input4
+done < input4
 echo $i
 #+end_src
+
+#+RESULTS:
+: 500
+
 #+begin_src bash :exports both
 i=0;
 while read p; do
@@ -97,9 +114,12 @@ if (( (p[0] <= p[2] && p[1] >= p[2]) || (p[0] >= p[2] && p[0] <= p[3]) ))
 then
 $((i+=1))
 fi
-done < aoc/input4
+done < input4
 echo $i
 #+end_src
+
+#+RESULTS:
+: 815
 
 ** Day 5
 #+begin_src racket :results output :exports both
@@ -150,6 +170,10 @@ part2
 
 #+end_src
 
+#+RESULTS:
+: "WHTLRMZRC"
+: "GMPMLWNMG"
+
 
 ** Day 6
 #+begin_src C :includes <stdio.h> :exports both
@@ -172,6 +196,9 @@ part2
     }
 
 #+end_src
+
+#+RESULTS:
+: 1658
 
 
 #+begin_src C :includes <stdio.h> :exports both
@@ -198,9 +225,12 @@ part2
 
 #+end_src
 
+#+RESULTS:
+: 2260
+
 ** Day 7
 
-#+begin_src js :results output
+#+begin_src js :results output :exports both
 const fs = require('fs');
 const input = fs.readFileSync('input7', 'utf8').split("\n").slice(1).map(element => { return element.trim().split(" "); });
 
@@ -261,7 +291,7 @@ console.log(lowestItems);
 : [ '/jvwtm/zjmldjdh/mdclfbs', 404395 ]
 
 ** Day 8
-#+begin_src octave
+#+begin_src octave :exports both
 siz = 99;
 file = fopen("input8");
 a = zeros(siz);
@@ -324,16 +354,13 @@ for j = 1:siz;
     end
   end
 end
-%a(1:5,1:5)
-%seen(:,:)
-%seen(90:99,90:99)
 sum(seen(:))
 #+end_src
 
 #+RESULTS:
 : 1719
 
-#+begin_src octave
+#+begin_src octave :exports both
 siz = 99;
 file = fopen("input8");
 a = zeros(siz);
