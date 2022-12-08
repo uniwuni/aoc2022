@@ -259,3 +259,126 @@ console.log(lowestItems);
 #+RESULTS:
 : 1444896
 : [ '/jvwtm/zjmldjdh/mdclfbs', 404395 ]
+
+** Day 8
+#+begin_src octave
+siz = 99;
+file = fopen("input8");
+a = zeros(siz);
+seen = zeros(siz);
+for i = 1:siz;
+  for j=1:siz;
+    a(i,j) = str2double(fgets(file,1));
+  end
+  fgets(file,1);
+end
+for i = 1:siz;
+  oldLeft = -1;
+  for j=1:siz;
+    if(a(i,j) < oldLeft);
+      %break
+    else
+      if(a(i,j) > oldLeft);
+        seen(i,j) = 1;
+      end
+      oldLeft = a(i,j);
+    end
+  end
+end
+for i = 1:siz;
+  oldRight = -1;
+  for j=1:siz;
+    if(a(i,siz+1-j) < oldRight);
+      %break
+    else
+      if(a(i,siz+1-j) > oldRight);
+        seen(i,siz+1-j) = 1;
+      end
+      oldRight = a(i,siz+1-j);
+    end
+  end
+end
+for j = 1:siz;
+  oldTop = -1;
+  for i=1:siz;
+    if(a(i,j) < oldTop);
+      %break
+    else
+      if(a(i,j) > oldTop);
+        seen(i,j) = 1;
+      end
+      oldTop = a(i,j);
+    end
+  end
+end
+for j = 1:siz;
+  oldBottom = -1;
+  for i=1:siz;
+    if(a(siz+1-i,j) < oldBottom);
+      %break
+    else
+      if(a(siz+1-i,j) > oldBottom);
+        seen(siz+1-i,j) = 1;
+      end
+      oldBottom = a(siz+1-i,j);
+    end
+  end
+end
+%a(1:5,1:5)
+%seen(:,:)
+%seen(90:99,90:99)
+sum(seen(:))
+#+end_src
+
+#+RESULTS:
+: 1719
+
+#+begin_src octave
+siz = 99;
+file = fopen("input8");
+a = zeros(siz);
+score = zeros(siz);
+for i = 1:siz;
+  for j=1:siz;
+    a(i,j) = str2double(fgets(file,1));
+  end
+  fgets(file,1);
+end
+for i=1:siz;
+  for j=1:siz;
+    down=0;
+    for d=i+1:siz;
+      down = down + 1;
+      if(a(d,j) >= a(i,j));
+        break
+      end
+    end
+    up=0;
+    for d=i-1:-1:1;
+      up = up + 1;
+      if(a(d,j) >= a(i,j));
+        break
+      end
+    end
+    right=0;
+    for d=j+1:siz;
+      right = right + 1;
+      if(a(i,d) >= a(i,j));
+        break
+      end
+    end
+    left=0;
+    for d=j-1:-1:1;
+      left = left + 1;
+      if(a(i,d) >= a(i,j));
+        break
+      end
+    end
+    score(i,j) = down * up * left * right;
+  end
+end
+max(score(:))
+#+end_src
+
+#+RESULTS:
+: 590824
