@@ -409,3 +409,81 @@ max(score(:))
 
 #+RESULTS:
 : 590824
+
+** Day 9
+https://stackoverflow.com/questions/2291802/is-there-a-c-iterator-that-can-iterate-over-a-file-line-by-line
+https://stackoverflow.com/questions/1903954/is-there-a-standard-sign-function-signum-sgn-in-c-c
+
+#+begin_src cpp :results output :main no :includes <iostream> <fstream> <string> <vector> <unordered_set> :options -Wall
+
+const std::pair<int,int> get_direction(const char dir) {
+   if (dir == 'U') return std::pair(0,1);
+   else if (dir == 'D') return std::pair(0,-1);
+   else if (dir == 'L') return std::pair(-1,0);
+   else if (dir == 'R') return std::pair(1,0);
+}
+
+
+const bool are_nearby(const std::vector<int> head, const std::vector<int> tail) {
+    return abs(head[0] - tail[0]) <= 1 && abs(head[1] - tail[1]) <= 1;
+}
+
+template <typename T> int sgn(T val) {
+    return (T(0) < val) - (val < T(0));
+}
+
+auto stringify = [](const std::vector<int>& p, std::string sep = "-")-> std::string{
+        return std::to_string(p[0]) + sep + std::to_string(p[1]);
+    };
+const std::vector<int> update_tail(std::vector<int> tail_pos, std::vector<int> head_pos, const int dx, const int dy, std::unordered_set<std::string>& vis) {
+    for (int i=0; i<abs(dx); i++){
+        head_pos[0]+=sgn(dx);
+        if(!are_nearby(head_pos, tail_pos)) {
+            tail_pos[0]+=sgn(dx);
+            tail_pos[1] += sgn(head_pos[1]-tail_pos[1]);
+
+        }
+        vis.insert(stringify(tail_pos));
+        //std::cout << "HEAD: " << head_pos[0] << "," << head_pos[1] << "\n";
+        //std::cout << "TAIL: " << tail_pos[0] << "," << tail_pos[1] << "\n";
+    }
+    for (int i=0; i<abs(dy); i++){
+        head_pos[1] += sgn(dy);
+        if(!are_nearby(head_pos, tail_pos)) {
+            tail_pos[1]+=sgn(dy);
+            tail_pos[0] += sgn(head_pos[0]-tail_pos[0]);
+        }
+        vis.insert(stringify(tail_pos));
+        //std::cout << "HEAD: " << head_pos[0] << "," << head_pos[1] << "\n";
+        //std::cout << "TAIL: " << tail_pos[0] << "," << tail_pos[1] << "\n";
+    }
+    //std::cout << "DONE\n";
+    return tail_pos;
+}
+
+
+int main()  {
+    std::ifstream input_file;
+    input_file.open("input9");
+    std::string instruction;
+    std::vector<int> head {0,0};
+    std::vector<int> tail {0,0};
+    std::unordered_set<std::string> visited {"0-0"};
+
+    while(getline(input_file, instruction)) {
+        char direction = instruction[0];
+        int length = std::stoi(instruction.substr(2));
+        const auto [dx, dy] = get_direction(direction);
+        tail = update_tail(tail, head, length * dx, length * dy, visited);
+        visited.insert(stringify(tail));
+        head[0] += length * dx;
+        head[1] += length * dy;
+        //std::cout << "Head:" << head[0] << ", " << head[1] << "\n";
+        //std::cout << "Tail:" << tail[0] << ", " << tail[1] << "\n";
+    }
+  std::cout << visited.size();
+}
+#+end_src
+
+#+RESULTS:
+: 6037
