@@ -487,3 +487,84 @@ int main()  {
 
 #+RESULTS:
 : 6037
+
+#+begin_src cpp :results output :main no :includes <iostream> <fstream> <string> <vector> <unordered_set> :options -Wall :tangle yes
+
+const std::pair<int,int> get_direction(const char dir) {
+    if (dir == 'U') return std::pair(0,1);
+    else if (dir == 'D') return std::pair(0,-1);
+    else if (dir == 'L') return std::pair(-1,0);
+    else if (dir == 'R') return std::pair(1,0);
+    else return std::pair(0,0);
+}
+
+
+const bool are_nearby(const std::vector<int> head, const std::vector<int> tail) {
+    return abs(head[0] - tail[0]) <= 1 && abs(head[1] - tail[1]) <= 1;
+}
+
+template <typename T> int sgn(T val) {
+    return (T(0) < val) - (val < T(0));
+}
+
+auto stringify = [](const std::vector<int>& p, std::string sep = "-")-> std::string{
+    return std::to_string(p[0]) + sep + std::to_string(p[1]);
+};
+const std::vector<std::vector<int>> update_tail(std::vector<std::vector<int>> tails, const int dx, const int dy, std::unordered_set<std::string>& vis) {
+
+     for (int i=0; i<abs(dx); i++){
+            tails[0][0]+=sgn(dx);
+            for (int j=1; j<tails.size(); j++){
+                if(!are_nearby(tails[j-1], tails[j])) {
+                    tails[j][0] += sgn(tails[j-1][0]-tails[j][0]);
+                    tails[j][1] += sgn(tails[j-1][1]-tails[j][1]);
+
+                }
+                if(j==tails.size()-1)
+                    vis.insert(stringify(tails[j]));
+            }
+        }
+     for (int i=0; i<abs(dy); i++){
+            tails[0][1]+=sgn(dy);
+            for (int j=1; j<tails.size(); j++){
+                if(!are_nearby(tails[j-1], tails[j])) {
+                    tails[j][1] += sgn(tails[j-1][1]-tails[j][1]);
+                    tails[j][0] += sgn(tails[j-1][0]-tails[j][0]);
+
+                }
+                if(j==tails.size()-1)
+                    vis.insert(stringify(tails[j]));
+            }
+        }
+            return tails;
+        }
+
+
+             void debug_print(std::vector<std::vector<int>> vect) {
+                 for(auto i : vect) {
+                     std::cout << i[0] << " " << i[1] << "\n";
+                 }
+                 std::cout << "\n";
+             }
+
+             int main()  {
+                 std::ifstream input_file;
+                 input_file.open("input9");
+
+                 std::string instruction;
+                 std::vector<std::vector<int>> tails(10, std::vector<int>(2));
+                 std::vector<std::vector<int>> newtails(10, std::vector<int>(2));
+                 std::unordered_set<std::string> visited {"0-0"};
+
+                 while(getline(input_file, instruction)) {
+                     char direction = instruction[0];
+                     int length = std::stoi(instruction.substr(2));
+                     const auto [dx, dy] = get_direction(direction);
+                     tails  = update_tail(tails, length * dx, length * dy, visited);
+                 }
+                 std::cout << visited.size();
+             }
+#+end_src
+
+#+RESULTS:
+: 2485
