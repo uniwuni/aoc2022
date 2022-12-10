@@ -571,3 +571,5 @@ const std::vector<std::vector<int>> update_tail(std::vector<std::vector<int>> ta
 #+RESULTS:
 : 354
 : 49792
+
+** Day 10
