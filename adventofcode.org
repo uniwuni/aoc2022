@@ -573,3 +573,99 @@ const std::vector<std::vector<int>> update_tail(std::vector<std::vector<int>> ta
 : 49792
 
 ** Day 10
+#+begin_src elixir :exports both
+defmodule CRT do
+  def init do
+    Task.start_link(fn -> loop(0,"") end)
+  end
+  defp loop(insc,screen) do
+    receive do
+      {:print} -> IO.puts(screen); loop(insc,screen)
+      {pos} ->
+        screen1 =
+        if rem(insc, 40) == 0 do
+          screen <> "\n"
+        else
+          screen
+        end
+        if abs(rem(insc,40) - pos) <= 1 do
+          screen2 = screen1 <> "#"
+          loop(insc+1,screen2)
+        else
+          screen2 = screen1 <> "."
+          loop(insc+1,screen2)
+        end
+    end
+  end
+end
+defmodule CPU do
+  def init(crt) do
+    Task.start_link(fn -> loop(0,1,[],true,crt) end)
+  end
+  defp loop(insc, state, callbacks,receptive,crt) do
+    state1 = List.foldr(callbacks, state, fn {n, func}, state -> if insc == n do func.(state) else state end end)
+
+    if receptive do
+      receive do
+        {:noop} ->  send crt, {state1}; loop(insc+1, state1, callbacks,true, crt)
+        {:addx, n} ->   send crt, {state1}; loop(insc+1, state1, [{insc+2, fn state -> state + n end} | callbacks], false, crt)
+        {:get, caller} ->
+            send caller, {insc, state1}
+            loop(insc, state, callbacks, true, crt)
+      end
+    else
+      send crt, {state1}
+      loop(insc+1,state1,callbacks,true, crt)
+    end
+  end
+end
+instrs = Enum.map(String.split(File.read!("input10"),"\n"), fn x -> String.split(x, " ") end)
+{:ok, crt} = CRT.init
+{:ok, cpu} = CPU.init(crt)
+
+for {instr, _idx} <- Enum.with_index(instrs) do
+    case instr do
+      ["noop"] -> send cpu, {:noop}
+
+      ["addx", nstr] ->
+          {n, _} = Integer.parse(nstr)
+          send cpu, {:addx, n}
+      [""] -> {}
+    end
+
+      send cpu, {:get, self()}
+      receive do
+        {insc, state} ->
+          if rem(insc - 20, 40) == 38 or rem(insc - 20, 40) == 39 or insc == 19 do
+            IO.write(state); IO.write(", "); IO.puts(insc)
+          end
+      end
+
+end
+send crt,{:print}
+#+end_src
+
+#+RESULTS:
+#+begin_example
+
+21, 19
+21, 59
+17, 98
+21, 138
+21, 179
+21, 219
+
+####.####.###..###..###..####.####.####.
+#.......#.#..#.#..#.#..#.#.......#.#.... 
+###....#..###..#..#.###..###....#..###..
+#.....#...#..#.###..#..#.#.....#...#.... 
+#....#....#..#.#....#..#.#....#....#....
+#....####.###..#....###..#....####.#.... 
+#+end_example
+
+#+begin_src calc :exports both
+    21*20+21*60+17*100+21*140+21*180+21*220
+#+end_src
+
+#+RESULTS:
+: 14720
