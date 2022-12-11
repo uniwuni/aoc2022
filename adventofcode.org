@@ -822,3 +822,56 @@ puts((entries.map {|monkey| monkey.inspection_count}).sort[-2..].reduce {|a,b| a
 #+RESULTS:
 :   0.126909   0.000296   0.127205 (  0.127220)
 : 29703395016
+
+* Potential languages
+** D
+- https://dlang.org
+- static
+- funky templates and contracts
+- great org support
+
+** Forth
+- very hard to get used to imo
+- would be interesting though
+
+** Java
+- about as basic as it gets
+- annoying stdlib though
+
+** OCaml
+- potentially interesting
+- can't be too hard from a functional POV
+- stdlib seems a little lacking though
+
+** Perl
+- why
+
+** C#
+- essentially just better Java
+- is considered fairly fun to write
+- maybe a little overhead-heavy for AOC
+
+** Io
+- https://iolanguage.org/index.html
+- smalltalk for millenials
+- message driven stuff is cool so this looks interesting
+
+** R
+- probably too statistics-heavy
+
+** Nim
+- https://nim-lang.org/
+- statically typed python
+- the crystal of snakes???
+
+** Rust
+- it's rust
+- can't hurt though it might take forever to get into it
+
+** Typescript
+- a couple people think it's decent
+- the nim of js???
+
+** Zig
+- super deranged compile time shit
+- bit too much overhead maybe?
