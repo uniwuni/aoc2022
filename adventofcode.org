@@ -747,7 +747,7 @@ puts((entries.map {|monkey| monkey.inspection_count}).sort[-2..].reduce {|a,b| a
 For part 2, we have to consider that all of these test criteria consist of divisibility
 by prime numbers $p_{i}$, which is not affected by treating everything in $\mathbb{Z}/\prod_{i} p_{i}\mathbb{Z}$.
 
-#+begin_src crystal :results output :exports both :tangle yes
+#+begin_src crystal :results output :exports both :tangle yes :options --release
 require "benchmark"
 def eval_expression(operator : String, left : String, right : String, i : Int64)
   l = left == "old" ? i : left.to_i64
@@ -803,16 +803,13 @@ input = File.read("input11").split("\n\n").map {|a| a.split("\n")}
 entries = input.map { |e| process_entry(e) }
 prime_product = entries.reduce(1) { |acc, e| e.divider * acc }
 puts Benchmark.measure {10000.times {|i|
-entries.map { |monkey|
+entries.each { |monkey|
   monkey.items.each { |level|
     monkey.inspection_count += 1
     level = monkey.expr.call(level)
     level = level % prime_product
-    if level.divisible_by?(monkey.divider)
-      entries[monkey.iftrue].items = entries[monkey.iftrue].items << level
-    else
-      entries[monkey.iffalse].items = entries[monkey.iffalse].items << level
-    end
+    idx = level.divisible_by?(monkey.divider) ? monkey.iftrue : monkey.iffalse
+    entries[idx].items = entries[idx].items << level
   }
   monkey.items = [] of Int64
   }
@@ -823,5 +820,5 @@ puts((entries.map {|monkey| monkey.inspection_count}).sort[-2..].reduce {|a,b| a
 #+end_src
 
 #+RESULTS:
-:   0.132146   0.000135   0.132281 (  0.132286)
+:   0.126909   0.000296   0.127205 (  0.127220)
 : 29703395016
