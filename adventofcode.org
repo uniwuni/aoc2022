@@ -669,3 +669,159 @@ send crt,{:print}
 
 #+RESULTS:
 : 14720
+
+** Day 11
+#+begin_src crystal :results output :exports both
+def eval_expression(operator : String, left : String, right : String, i : Int32)
+  l = left == "old" ? i : left.to_i
+  r = right == "old" ? i : right.to_i
+  if operator == "*"
+    return l * r
+  else
+    return l + r
+  end
+end
+
+class Monkey
+  property items : Array(Int32)
+  property expr : Int32 -> Int32
+  property divider : Int32 -> Bool
+  property iftrue : Int32
+  property iffalse : Int32
+  property inspection_count : Int32
+  def initialize(@items, @expr, @divider, @iftrue, @iffalse)
+    @inspection_count = 0
+  end
+end
+
+def parse_expression(str : String) : Int32 -> Int32
+  strs = str.split
+  operator = strs[1]
+  left = strs[0]
+  right = strs[2]
+  return ->(x : Int32) { eval_expression(operator, left, right, x) }
+end
+
+def process_entry(str : Array(String)) : Monkey
+  number = str[0][7..-2].to_i
+  starting_items = str[1][18..].split(", ").map {|a| a.to_i}
+  expression_raw = str[2][19..]
+  divider = str[3][21..].to_i
+  iftrue_monkey = str[4][29..].to_i
+  iffalse_monkey = str[5][29..].to_i
+  return Monkey.new(
+          starting_items,
+          parse_expression(expression_raw),
+          ->(x : Int32) { x.divisible_by?(divider) },
+          iftrue_monkey,
+          iffalse_monkey)
+end
+
+
+input = File.read("input11").split("\n\n").map {|a| a.split("\n")}
+entries = input.map { |e| process_entry(e) }
+20.times {|i|
+entries.map_with_index { |monkey, idx|
+  items = monkey.items
+  items.each { |level|
+    monkey.inspection_count += 1
+    level = monkey.expr.call(level)
+    level = level // 3
+    if monkey.divider.call(level)
+      entries[monkey.iftrue].items = entries[monkey.iftrue].items << level
+    else
+      entries[monkey.iffalse].items = entries[monkey.iffalse].items << level
+    end
+  }
+  monkey.items = [] of Int32
+  }
+
+}
+puts((entries.map {|monkey| monkey.inspection_count}).sort[-2..].reduce {|a,b| a * b})
+#+end_src
+
+#+RESULTS:
+: 113232
+
+
+For part 2, we have to consider that all of these test criteria consist of divisibility
+by prime numbers $p_{i}$, which is not affected by treating everything in $\mathbb{Z}/\prod_{i} p_{i}\mathbb{Z}$.
+
+#+begin_src crystal :results output :exports both :tangle yes
+require "benchmark"
+def eval_expression(operator : String, left : String, right : String, i : Int64)
+  l = left == "old" ? i : left.to_i64
+  r = right == "old" ? i : right.to_i64
+  if operator == "*"
+    return l * r
+  else
+    return l + r
+  end
+end
+
+class Monkey
+  property items : Array(Int64)
+  property expr : Int64 -> Int64
+  property divider : Int64
+  property iftrue : Int64
+  property iffalse : Int64
+  property inspection_count : Int64
+  def initialize(@items, @expr, @divider, @iftrue, @iffalse)
+    @inspection_count = 0
+  end
+end
+
+def parse_expression(str : String) : Int64 -> Int64
+  strs = str.split
+  operator = strs[1] == "*" ? ->(x : Int64, y : Int64) {x * y} :\
+    ->(x : Int64, y : Int64) {x + y}
+  left = strs[0] == "old" ? (-1).to_i64 : strs[0].to_i64
+  right = strs[2] == "old" ? (-1).to_i64 : strs[2].to_i64
+  return ->(i : Int64)
+  { l = left == -1 ? i : left
+    r = right == -1 ? i : right
+    operator.call(l,r) }
+end
+
+def process_entry(str : Array(String)) : Monkey
+  number = str[0][7..-2].to_i
+  starting_items = str[1][18..].split(", ").map {|a| a.to_i64}
+  expression_raw = str[2][19..]
+  divider = str[3][21..].to_i64
+  iftrue_monkey = str[4][29..].to_i64
+  iffalse_monkey = str[5][29..].to_i64
+  return Monkey.new(
+          starting_items,
+          parse_expression(expression_raw),
+          divider,
+          iftrue_monkey,
+          iffalse_monkey)
+end
+
+
+input = File.read("input11").split("\n\n").map {|a| a.split("\n")}
+entries = input.map { |e| process_entry(e) }
+prime_product = entries.reduce(1) { |acc, e| e.divider * acc }
+puts Benchmark.measure {10000.times {|i|
+entries.map { |monkey|
+  monkey.items.each { |level|
+    monkey.inspection_count += 1
+    level = monkey.expr.call(level)
+    level = level % prime_product
+    if level.divisible_by?(monkey.divider)
+      entries[monkey.iftrue].items = entries[monkey.iftrue].items << level
+    else
+      entries[monkey.iffalse].items = entries[monkey.iffalse].items << level
+    end
+  }
+  monkey.items = [] of Int64
+  }
+
+}
+}
+puts((entries.map {|monkey| monkey.inspection_count}).sort[-2..].reduce {|a,b| a * b})
+#+end_src
+
+#+RESULTS:
+:   0.132146   0.000135   0.132281 (  0.132286)
+: 29703395016
