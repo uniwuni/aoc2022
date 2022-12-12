@@ -976,10 +976,11 @@ echo len(ps)
 ** R
 - probably too statistics-heavy
 
-** Nim
+** DONE Nim
 - https://nim-lang.org/
 - statically typed python
 - the crystal of snakes???
+- fucking sucks
 
 ** Rust
 - it's rust
