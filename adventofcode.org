@@ -1,3 +1,5 @@
+
+
 * Advent of Code 2022
 
 ** Day 1
@@ -745,7 +747,7 @@ puts((entries.map {|monkey| monkey.inspection_count}).sort[-2..].reduce {|a,b| a
 
 
 For part 2, we have to consider that all of these test criteria consist of divisibility
-by prime numbers $p_{i}$, which is not affected by treating everything in $\mathbb{Z}/\prod_{i} p_{i}\mathbb{Z}$.
+by prime numbers \(p_i\), which is not affected by treating everything in $\mathbb{Z}/\prod_{i} p_{i}\mathbb{Z}$.
 
 #+begin_src crystal :results output :exports both :tangle yes :options --release
 require "benchmark"
