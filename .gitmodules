@@ -1,0 +1,3 @@
+[submodule "AStarNim"]
+	path = AStarNim
+	url = https://github.com/Nycto/AStarNim

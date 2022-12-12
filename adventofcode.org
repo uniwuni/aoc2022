@@ -823,6 +823,124 @@ puts((entries.map {|monkey| monkey.inspection_count}).sort[-2..].reduce {|a,b| a
 :   0.126909   0.000296   0.127205 (  0.127220)
 : 29703395016
 
+** Day 12
+#+begin_src nim :exports both
+import astar, hashes, sequtils
+type Grid = seq[seq[int]]
+type Point = tuple[x,y : int]
+template yieldIfExists( grid: Grid, height : int, point: Point ) =
+    ## Checks if a point exists within a grid, then calls yield it if it does
+    let exists =
+        point.y >= 0 and point.y < grid.len and
+        point.x >= 0 and point.x < grid[point.y].len
+    if exists and grid[point.y][point.x] <= height + 1:
+        yield point
+iterator neighbors*( grid: Grid, point: Point ): Point =
+    ## An iterator that yields the neighbors of a given point
+    yieldIfExists( grid, grid[point.y][point.x], (x: point.x - 1, y: point.y) )
+    yieldIfExists( grid, grid[point.y][point.x], (x: point.x + 1, y: point.y) )
+    yieldIfExists( grid, grid[point.y][point.x], (x: point.x, y: point.y - 1) )
+    yieldIfExists( grid, grid[point.y][point.x], (x: point.x, y: point.y + 1) )
+
+proc cost*(grid: Grid, a, b: Point): float =
+    ## Returns the cost of moving from point `a` to point `b`
+    float(1)
+    #float((b.x-a.x) + (b.y-a.y))
+
+proc heuristic*( grid: Grid, node, goal: Point ): float =
+    ## Returns the priority of inspecting the given node
+    asTheCrowFlies[Point](node, goal) - cast[float](grid[node.y][node.x])
+
+proc find_char(input : seq[seq[char]], ch : char) : tuple[x,y:int] =
+  for iy, y in input:
+    for ix, x in y:
+      if x == ch:
+        return (ix,iy)
+
+proc get_height(ch: char) : int =
+  if ch == 'S': 0
+  elif ch == 'E': 25
+  else: ord(ch) - ord('a')
+
+
+let strings = readLines("input12", 41)
+let seqs = map(strings, proc(x:string):seq[char] = cast[seq[char]](x))
+let start = find_char(seqs, 'S')
+let goal = find_char(seqs, 'E')
+let grid = map[seq[char],seq[int]](seqs, (proc(x:seq[char]):seq[int] = map(x, get_height)))
+var dists : seq[int] = @[]
+for iy in 0 .. len(strings) - 1:
+  for ix in 0 .. len(strings[0]) - 1:
+    if grid[iy][ix] == 0:
+      let ps = toSeq(path[Grid, Point, float](grid,(ix,iy),goal))
+      if len(ps) > 0:
+        dists = dists & (len(ps)-1)
+
+echo min(dists)
+    
+var i = 0
+let ps = toSeq(path[Grid, Point, float](grid,start,goal))
+for iy in 0 .. len(strings) - 1:
+  for ix in 0 .. len(strings[0]) - 1:
+    if (ix,iy) in ps:
+      stdout.write strings[iy][ix]
+    else:
+      stdout.write '.'
+  echo ""
+#for point in path[Grid, Point, float](grid, start, goal):
+#    echo point
+#    i += 1
+#echo (i-1)
+echo len(ps)
+#+end_src
+
+#+RESULTS:
+| 332                                                                |
+| .................................................................. |
+| .................................................................. |
+| .................................................................. |
+| .................................................................. |
+| .................................................................. |
+| .................................................................. |
+| .................................................................. |
+| .................................................................. |
+| ...............................................jjjk............... |
+| ............................................jjjj..kkk............. |
+| ...................................iiiiiijjjj.......k............. |
+| ..................................ii..........rrrp..kk............ |
+| ..................................i...qqqrrrrrr..pp..k............ |
+| .................................ii.qqq...........pp.k............ |
+| .................................h..q........uuuu..p.k............ |
+| .................................h..q..tttuuuu..uu.p.k............ |
+| .................................h..q..t.........u.p.ll........... |
+| .................................h..q..t.........u.p..ll.......... |
+| .................................h..q..t.........v.pp..ll......... |
+| .................................h..p..t.........vv.pq..l......... |
+| Sb...............................h..p..t...E......vv.qq.ll........ |
+| .b..............................hh.pp.ss.xxy.......v..q..l........ |
+| .b..............................g..p.ss.xy........vv..q..l........ |
+| .b..............................g.pp.s..wwww...vvvv..qq.ll........ |
+| .b....................cccccccc.gg.p..s.....w...w....qq..m......... |
+| .b....................c......c.g..p..sss...ww..w.qqqq..mm......... |
+| .bccccccc...........ccc......c.gg.pp...ssss.wwww.r..mmmm.......... |
+| ........ccccccccccccc........c..g..ooo....sr....rr.mm............. |
+| .............................c..gg...ooooo.rr...r.nm.............. |
+| .............................cc..gg......oo.rrrrr.n............... |
+| ..............................cc..fffff...oo.....nn............... |
+| ...............................cc.....fff..n.....n................ |
+| ................................cccc....ff.nnnnnnn................ |
+| ...................................cccc..fe....................... |
+| ......................................cc..ee...................... |
+| .......................................c...eeeeeeeed.............. |
+| .......................................c...........c.............. |
+| .......................................c.........ccc.............. |
+| .......................................cc........c................ |
+| ........................................cccccccc.c................ |
+| ...............................................ccc................ |
+| 340                                                                |
+
+**
+
 * Potential languages
 ** D
 - https://dlang.org
