@@ -826,7 +826,7 @@ puts((entries.map {|monkey| monkey.inspection_count}).sort[-2..].reduce {|a,b| a
 : 29703395016
 
 ** Day 12
-#+begin_src nim :exports both
+#+begin_src nim :export both
 import astar, hashes, sequtils
 type Grid = seq[seq[int]]
 type Point = tuple[x,y : int]
@@ -889,10 +889,7 @@ for iy in 0 .. len(strings) - 1:
     else:
       stdout.write '.'
   echo ""
-#for point in path[Grid, Point, float](grid, start, goal):
-#    echo point
-#    i += 1
-#echo (i-1)
+
 echo len(ps)
 #+end_src
 
