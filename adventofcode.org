@@ -938,7 +938,62 @@ echo len(ps)
 | ...............................................ccc................ |
 | 340                                                                |
 
-**
+** Day 13
+#+begin_src ocaml :tangle yes
+#use "topfind";;
+#require "opal";;
+open Opal
+
+type inp =
+  | Num of int
+  | List of inp list
+
+let parens = between (exactly '[') (exactly ']')
+let integer = many1 digit => implode % int_of_string
+
+type 'a fix = Fix of ('a fix -> 'a)
+let z f =
+  (fun (Fix x as fx) -> f (fun v -> x fx v))
+  (Fix (fun (Fix x as fx) -> f (fun v -> x fx v)))
+let rec arr = z (fun f -> parens (sep_by (f <|> (integer => fun x -> Num x)) (exactly ',')) => fun x -> List x)
+
+let fromSome x =
+match x with
+  | Some a -> a
+
+let rec compr x y =
+  match x with
+  | Num n -> (match y with
+    | Num m -> Stdlib.compare n m
+    | List l2 -> compr (List [Num n]) (List l2))
+  | List l1 -> (match y with
+    | Num m -> compr (List l1) (List [Num m])
+    | List l2 -> List.compare compr l1 l2)
+
+let read_lines name : string list =
+  let ic = open_in name in
+  let try_read () =
+    try Some (input_line ic) with End_of_file -> None in
+  let rec loop acc = match try_read () with
+    | Some s -> loop (s :: acc)
+    | None -> close_in ic; List.rev acc in
+  loop []
+
+let rec make_pair l =
+  match l with
+  | [] -> []
+  | x :: y :: t -> (x,y) :: make_pair t
+  | _::[] -> []
+
+let input1 = List.map (fun x -> fromSome ( parse arr (LazyStream.of_string x))) (List.filter (fun x -> not (String.equal (String.trim x) String.empty)) (read_lines "input13"))
+let input2 = [List [List [Num 2]]; List [List [Num 6]]] @ input1
+let output1 = List.fold_right (+) (List.mapi (fun i x -> max 0 (- (i + 1) * compr (fst x) (snd x))) (make_pair input1)) 0
+let output2 = List.fold_right ( * ) (List.mapi (fun i x -> if x = List [List [Num 2]] || x = List [List [Num 6]] then i+1 else 1) (List.sort compr input2)) 1
+#+end_src
+
+#+RESULTS:
+: 5938
+: 29025
 
 * Potential languages
 ** D
@@ -955,10 +1010,11 @@ echo len(ps)
 - about as basic as it gets
 - annoying stdlib though
 
-** OCaml
+** DONE OCaml
 - potentially interesting
 - can't be too hard from a functional POV
 - stdlib seems a little lacking though
+- hm
 
 ** Perl
 - why
