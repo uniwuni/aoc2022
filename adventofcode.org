@@ -995,6 +995,121 @@ let output2 = List.fold_right ( * ) (List.mapi (fun i x -> if x = List [List [Nu
 : 5938
 : 29025
 
+** Day 14
+#+begin_src java
+import java.nio.file.*;
+import java.util.stream.*;
+import java.util.*;
+import java.lang.Math;
+
+public class Day14 {
+     public static int[] simFall(int[][] points) throws Exception {
+        int x = 500;
+        int y = 0;
+        while(true) {
+            if(y >= 199) {
+                throw new Exception();
+            }
+            if(points[x][y+1] != 1) {
+                y += 1;
+            } else if(points[x-1][y+1] != 1) {
+                x -= 1;
+                y += 1;
+            } else if(points[x+1][y+1] != 1) {
+                x += 1;
+                y += 1;
+            } else {
+                int[] cs = new int[2];
+                cs[0] = x;
+                cs[1] = y;
+                return cs;
+            }
+        }
+    }
+    public static int[] simFall2(int[][] points) throws Exception {
+        int x = 500;
+        int y = 0;
+        while(true) {
+            if(points[x][y+1] != 1) {
+                y += 1;
+            } else if(points[x-1][y+1] != 1) {
+                x -= 1;
+                y += 1;
+            } else if(points[x+1][y+1] != 1) {
+                x += 1;
+                y += 1;
+            } else {
+                int[] cs = new int[2];
+                cs[0] = x;
+                cs[1] = y;
+                if(x == 500 && y == 0) throw new Exception();
+
+                return cs;
+            }
+        }
+    }
+
+    public static void main(String[] args) throws IOException {
+        List<List<String[]>> data =
+            Files.readAllLines(Paths.get("input14"))
+                               .stream()
+                               .map(p -> Arrays.asList(p.split(" -> ")))
+                               .map(p -> p.stream().map(q -> q.split(",")).collect(Collectors.toList()))
+                               .collect(Collectors.toList());
+
+        int[][] points = new int[2000][200];
+        for(int x = 0; x < 2000; x++) {
+            for(int y = 0; y < 200; y++) {
+                points[x][y] = 0;
+            }
+        }
+        int maxy = 0;
+
+        for(List<String[]> path : data) {
+            for(int i = 0; i < path.size()-1; i++) {
+                int fx = Integer.parseInt(path.get(i)[0]);
+                int fy = Integer.parseInt(path.get(i)[1]);
+                int tx = Integer.parseInt(path.get(i+1)[0]);
+                int ty = Integer.parseInt(path.get(i+1)[1]);
+                if(fy == ty) {
+                    for(int x = fx; x != tx; x += Math.signum(tx-fx)) {
+                        points[x][fy] = 1;
+                        if(fy > maxy) maxy = fy;
+                    }
+                    points[tx][ty] = 1;
+                } else {
+                    for(int y = fy; y != ty; y += Math.signum(ty-fy)) {
+                        points[fx][y] = 1;
+                    }
+                    points[fx][ty] = 1;
+                }
+            }
+        }
+        // Part 2
+        int floory = maxy+2;
+        for(int i = 0; i < 2000; i++) {
+            points[i][floory] = 1;
+        }
+
+
+        int i = 0;
+        try {
+            for(;;i++) {
+              int[] np = simFall2(points);
+              points[np[0]][np[1]] = 1;
+            }
+        } catch(Exception e) {
+            System.out.println(i+1);
+        }
+
+    }
+}
+#+end_src
+
+#+RESULTS:
+: 29804
+
+
 * Potential languages
 ** D
 - https://dlang.org
