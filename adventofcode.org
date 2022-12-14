@@ -1121,10 +1121,10 @@ public class Day14 {
 - very hard to get used to imo
 - would be interesting though
 
-** Java
+** DONE Java
 - about as basic as it gets
 - annoying stdlib though
-
+- kinda mid
 ** DONE OCaml
 - potentially interesting
 - can't be too hard from a functional POV
