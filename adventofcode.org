@@ -1109,6 +1109,144 @@ public class Day14 {
 #+RESULTS:
 : 29804
 
+* Day 15
+#+begin_src awk  :cmd-line -F'[=,:]' :results table :in-file input15 :post sort(data=*this*) :exports both
+
+arraylen=0;
+function abs(v) {return v < 0 ? -v : v}
+function max(x,y) {return x < y ? y : x}
+{
+    #print($1,"!", $2,"!", $3, "!", $4, "!", $5, "!", $6,"!", $7,"!", $8)
+    dist = (abs($2-$6)+abs($4-$8))-(abs($4-2000000));
+    #print(dist)
+    if(dist > 0) {
+        print($2 - dist, $2 + dist)
+    }
+}
+#+end_src
+
+#+NAME: unsorted
+#+RESULTS:
+|  1559140 | 1842994 |
+|  2733699 | 4331039 |
+|   180920 |  615896 |
+|   721531 | 2733699 |
+|  2171937 | 2733699 |
+| -1718291 | 1894615 |
+|  2733699 | 3237041 |
+|   249057 |  377285 |
+|   604221 | 1881481 |
+|  3576288 | 4406514 |
+
+#+begin_src sh :stdin unsorted :exports both
+sort -g
+#+end_src
+
+#+RESULTS:
+| -1718291 | 1894615 |
+|   180920 |  615896 |
+|   249057 |  377285 |
+|   604221 | 1881481 |
+|   721531 | 2733699 |
+|  1559140 | 1842994 |
+|  2171937 | 2733699 |
+|  2733699 | 3237041 |
+|  2733699 | 4331039 |
+|  3576288 | 4406514 |
+
+Can be computed manually:
+Ignore line 2-4 and add 5: -1718291 - 2733699
+last lines yield up to 4406514 for
+
+#+begin_src calc :exports both
+    4406514 + 1718291
+#+end_src
+
+#+RESULTS:
+: 6124805
+
+** Part 2
+#+begin_src awk  :cmd-line -F'[=,:]' :results table :in-file input15 :exports both
+
+arraylen=0;
+function abs(v) {return v < 0 ? -v : v}
+function max(x,y) {return x < y ? y : x}
+{
+    #print($1,"!", $2,"!", $3, "!", $4, "!", $5, "!", $6,"!", $7,"!", $8)
+
+    dist = (abs($2-$6)+abs($4-$8));
+    print($2, $4, dist)
+    #print(dist)
+
+}
+#+end_src
+
+#+name: sensors
+#+RESULTS:
+| 3907621 | 2895218 |  171491 |
+| 1701067 | 3075142 | 1217069 |
+| 3532369 |  884718 | 1913952 |
+| 2362427 |   41763 | 1636963 |
+|  398408 | 3688691 | 1906179 |
+| 1727615 | 1744968 | 1261116 |
+| 2778183 | 3611924 |  607635 |
+| 2452818 | 2533012 |  813893 |
+|   88162 | 2057063 | 1863516 |
+| 2985370 | 2315046 |  566717 |
+| 2758780 | 3000106 |  744980 |
+| 3501114 | 3193710 |  533508 |
+|  313171 | 1016326 | 1047788 |
+| 3997998 | 3576392 |  710922 |
+|   84142 |  102550 |  481493 |
+| 3768533 | 3985372 |   81477 |
+| 2999744 | 3998031 |  708971 |
+| 3380504 | 2720962 |  155888 |
+| 3357940 | 3730208 |  584280 |
+| 1242851 |  838744 | 1799886 |
+| 3991401 | 2367688 |  782801 |
+| 3292286 | 2624894 |  163738 |
+| 2194423 | 3990859 |  355060 |
+
+#+begin_src typescript :var sensors=sensors
+const start = new Date().getTime();
+for(let i=1;i<=4000000;i++) {
+    let is = [];
+    for(var s of sensors) {
+
+        let d = s[2] - Math.abs(s[1] -i);
+        if(d > 0) {
+            let x1 = Math.max(0, s[0] - d);
+            let x2 = Math.min(s[0] + d,4000000);
+            is.push([x1,x2]);
+
+        }
+    }
+    is = is.sort(function(a, b) {
+        return a[0] - b[0];
+    });
+    if(is.length > 0) {
+        let result = [is[0]];
+        for (let i = 1; i < is.length; i++) {
+            if(is[i][0] <= result[result.length - 1][1]) {
+                result[result.length - 1][1] = Math.max(result[result.length - 1][1], is[i][1]);
+            } else {
+                result.push(is[i]);
+            }
+        }
+        if(result.length != 1) {
+            console.log(i, result[0][1] + 1, i + (result[0][1] + 1) * 4000000);
+        }
+    }
+
+}
+
+let elapsed = new Date().getTime() - start;
+console.log(elapsed);
+#+end_src
+
+#+RESULTS:
+: 3364986 3138881 12555527364986
+: 2505
 
 * Potential languages
 ** D
