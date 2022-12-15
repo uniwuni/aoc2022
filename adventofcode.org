@@ -1207,6 +1207,9 @@ function max(x,y) {return x < y ? y : x}
 | 3292286 | 2624894 |  163738 |
 | 2194423 | 3990859 |  355060 |
 
+
+https://keithwilliams-91944.medium.com/merge-intervals-solution-in-javascript-daa61b618ed4
+
 #+begin_src typescript :var sensors=sensors
 const start = new Date().getTime();
 for(let i=1;i<=4000000;i++) {
